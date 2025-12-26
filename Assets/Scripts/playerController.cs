@@ -1,4 +1,4 @@
-using UnityEngine;  // <--- ESSA LINHA É A MÁGICA QUE FALTA!
+using UnityEngine;
 
 public class playerController : MonoBehaviour
 {
@@ -8,6 +8,9 @@ public class playerController : MonoBehaviour
     private float _playerInitialSpeed;
     public float _playerRumSpeed;
     private Vector2 _playerDirection;
+
+    private bool _isAttack = false;
+
 
     void Start()
     {
@@ -33,21 +36,28 @@ public class playerController : MonoBehaviour
         Flip();
 
         PlayerRun();
+
+        OnAttack();
+
+        if (_isAttack)
+        {
+            _playerAnimator.SetInteger("Movimento", 2);
+        }
     }
 
     void FixedUpdate()
     {
-        _playerRigidibody2D.MovePosition(_playerRigidibody2D.position + _playerDirection * _playerSpeed * Time.fixedDeltaTime);
+        _playerRigidibody2D.MovePosition(_playerRigidibody2D.position + _playerDirection.normalized * _playerSpeed * Time.fixedDeltaTime);
     }
     void Flip()
     {
         if (_playerDirection.x > 0)
-        {        
+        {
             transform.eulerAngles = new Vector2(0f, 0f);
         }
         else if (_playerDirection.x < 0)
         {
-            
+
             transform.eulerAngles = new Vector2(0f, 180f);
         }
     }
@@ -65,4 +75,16 @@ public class playerController : MonoBehaviour
         }
 
     }
+    void OnAttack()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
+        {
+            _isAttack = true;
+        }
+        if (Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(1))
+        {
+            _isAttack = false;
+        }
+    }
+
 }
