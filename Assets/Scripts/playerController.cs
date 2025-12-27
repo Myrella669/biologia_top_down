@@ -11,7 +11,6 @@ public class playerController : MonoBehaviour
 
     private bool _isAttack = false;
 
-
     void Start()
     {
         _playerRigidibody2D = GetComponent<Rigidbody2D>();
@@ -22,21 +21,26 @@ public class playerController : MonoBehaviour
 
     void Update()
     {
+    }
+
+    void FixedUpdate()
+    {
         _playerDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        if (_playerDirection.sqrMagnitude > 0)
+        if (_playerDirection.sqrMagnitude > 0.1f)
         {
             _playerAnimator.SetInteger("Movimento", 1);
+
+            _playerAnimator.SetFloat("AxisX", _playerDirection.x);
+            _playerAnimator.SetFloat("AxisY", _playerDirection.y);
+            MovePlayer();
         }
         else
         {
             _playerAnimator.SetInteger("Movimento", 0);
         }
 
-        Flip();
-
         PlayerRun();
-
         OnAttack();
 
         if (_isAttack)
@@ -45,22 +49,11 @@ public class playerController : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void MovePlayer()
     {
         _playerRigidibody2D.MovePosition(_playerRigidibody2D.position + _playerDirection.normalized * _playerSpeed * Time.fixedDeltaTime);
     }
-    void Flip()
-    {
-        if (_playerDirection.x > 0)
-        {
-            transform.eulerAngles = new Vector2(0f, 0f);
-        }
-        else if (_playerDirection.x < 0)
-        {
 
-            transform.eulerAngles = new Vector2(0f, 180f);
-        }
-    }
 
     void PlayerRun()
     {
@@ -73,8 +66,8 @@ public class playerController : MonoBehaviour
         {
             _playerSpeed = _playerInitialSpeed;
         }
-
     }
+
     void OnAttack()
     {
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
@@ -86,5 +79,4 @@ public class playerController : MonoBehaviour
             _isAttack = false;
         }
     }
-
 }
